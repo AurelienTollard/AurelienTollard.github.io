@@ -3,13 +3,15 @@ import { MovingDom } from './Components/MovingButton'
 import { Body, Engine, Events, Render, Runner, World } from 'matter-js'
 import './App.css'
 import { useEffect, useRef, useState } from 'react';
-import React from 'react';
+import kidGif from '../assets/kid-meme.gif'
 
 function App() {
   const movingButtonref = useRef<HTMLButtonElement>(null);
   const staticButtonRef = useRef<HTMLButtonElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const [accepted, setAccepted] = useState(false);
 
+  let isStaticButtonTriggered = false;
   const engine = Engine.create({ gravity: { x: 0, y: 0 } });
   const render = Render.create({
     element: document.body,
@@ -18,8 +20,8 @@ function App() {
       width: document.body.clientWidth,
       height: document.body.clientHeight,
       background: 'white',
-      showDebug: true,
-      wireframes: true,
+      // showDebug: true,
+      wireframes: false,
     },
   });
   const buttonMoving = MovingDom(engine, movingButtonref);
@@ -45,7 +47,7 @@ function App() {
         wrapPosition(buttonMoving);
         const distance = Math.sqrt((cursorBody.position.x - buttonStatic.position.x) ** 2 + (cursorBody.position.y - buttonStatic.position.y) ** 2);
         const target = 100;
-        if (distance > target) {
+        if (distance > target && isStaticButtonTriggered) {
           const slope = (cursorBody.position.y - buttonStatic.position.y) / (cursorBody.position.x - buttonStatic.position.x);
           const diff = distance - target;
           const newX = Math.sqrt(diff ** 2 / (1 + slope ** 2));
@@ -53,9 +55,11 @@ function App() {
           const xDir: number = (cursorBody.position.x - buttonStatic.position.x) > 0 ? 1 : -1;
           const yDir: number = xDir == 1 ? 1 : -1;
           Body.setPosition(buttonStatic, {
-            x: buttonStatic.position.x += xDir * newX,
-            y: buttonStatic.position.y += yDir * newY
-          })
+            x: buttonStatic.position.x + xDir * newX,
+            y: buttonStatic.position.y + yDir * newY
+          });
+        } else if (distance < target) {
+          isStaticButtonTriggered = true;
         }
       });
     }
@@ -88,9 +92,14 @@ function App() {
   return (
     <div id="content-body">
       <div id="content">
-        <h1 id="title" ref={titleRef}>Title</h1>
+        {
+          accepted ?
+            <img src={kidGif} />
+            :
+            <h1 id="title" ref={titleRef}>Title</h1>
+        }
         <div id="Buttons">
-          <button ref={staticButtonRef} id="staticButton">Button1</button>
+          <button ref={staticButtonRef} id="staticButton" onClick={function() { return setAccepted(true) }}>Button1</button>
           <button ref={movingButtonref} id="movingButton">Button2</button>
         </div>
       </div>
