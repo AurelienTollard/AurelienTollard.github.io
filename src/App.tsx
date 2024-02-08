@@ -9,6 +9,7 @@ function App() {
   const movingButtonref = useRef<HTMLButtonElement>(null);
   const staticButtonRef = useRef<HTMLButtonElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const gifRef = useRef<HTMLImageElement>(null);
   const [accepted, setAccepted] = useState(false);
 
   let isStaticButtonTriggered = false;
@@ -27,7 +28,18 @@ function App() {
   const buttonMoving = MovingDom(engine, movingButtonref);
   const buttonStatic = MovingDom(engine, staticButtonRef);
   const staticTitle = MovingDom(engine, titleRef);
+  const staticGif = MovingDom(engine, gifRef, false);
   const cursorBody = CursorObject(30);
+
+  useEffect(() => {
+    cursorBody.collisionFilter.category = 0x0002; // Cursor category
+  }, [cursorBody]);
+
+  useEffect(() => {
+    if (buttonMoving) {
+      buttonMoving.collisionFilter.mask = 0x0002;
+    }
+  }, [buttonMoving]);
 
   useEffect(() => {
     if (staticTitle) {
@@ -37,9 +49,28 @@ function App() {
 
   useEffect(() => {
     if (buttonStatic) {
-      buttonStatic.isStatic = true;
+      buttonStatic.collisionFilter.mask = 0x0001;
     }
   }, [buttonStatic]);
+
+  useEffect(() => {
+    if (staticGif) {
+      staticGif.isStatic = true;
+    }
+  }, [staticGif]);
+
+  useEffect(() => {
+    if (accepted && staticGif) {
+      World.add(engine.world, staticGif);
+      console.log("spawning giff");
+    } else {
+      console.log(accepted, staticGif);
+    }
+  }, [accepted, staticGif]);
+
+  useEffect(() => {
+    console.log("GifRef = ", gifRef);
+  }, [gifRef]);
 
   useEffect(() => {
     if (buttonMoving && buttonStatic) {
@@ -94,7 +125,7 @@ function App() {
       <div id="content">
         {
           accepted ?
-            <img src={kidGif} />
+            <img src={kidGif} ref={gifRef} style={{ width: "220px", height: "170px" }} />
             :
             <h1 id="title" ref={titleRef}>Title</h1>
         }
