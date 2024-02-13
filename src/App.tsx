@@ -20,7 +20,7 @@ function App() {
     options: {
       width: document.body.clientWidth,
       height: document.body.clientHeight,
-      background: 'white',
+      background: 'transparent',
       // showDebug: true,
       wireframes: false,
     },
@@ -28,7 +28,7 @@ function App() {
   const buttonMoving = MovingDom(engine, movingButtonref);
   const buttonStatic = MovingDom(engine, staticButtonRef);
   const staticTitle = MovingDom(engine, titleRef);
-  const staticGif = MovingDom(engine, gifRef, false);
+  // const staticGif = MovingDom(engine, gifRef, false);
   const cursorBody = CursorObject(30);
 
   useEffect(() => {
@@ -53,20 +53,20 @@ function App() {
     }
   }, [buttonStatic]);
 
-  useEffect(() => {
-    if (staticGif) {
-      staticGif.isStatic = true;
-    }
-  }, [staticGif]);
+  // useEffect(() => {
+  //   if (staticGif) {
+  //     staticGif.isStatic = true;
+  //   }
+  // }, [staticGif]);
 
-  useEffect(() => {
-    if (accepted && staticGif) {
-      World.add(engine.world, staticGif);
-      console.log("spawning giff");
-    } else {
-      console.log(accepted, staticGif);
-    }
-  }, [accepted, staticGif]);
+  // useEffect(() => {
+  //   if (accepted && staticGif) {
+  //     World.add(engine.world, staticGif);
+  //     console.log("spawning giff");
+  //   } else {
+  //     console.log(accepted, staticGif);
+  //   }
+  // }, [accepted, staticGif]);
 
   useEffect(() => {
     console.log("GifRef = ", gifRef);
@@ -125,13 +125,17 @@ function App() {
       <div id="content">
         {
           accepted ?
-            <img src={kidGif} ref={gifRef} style={{ width: "220px", height: "170px" }} />
-            :
-            <h1 id="title" ref={titleRef}>Title</h1>
+            (
+              <>
+                <img src={kidGif} style={{ width: "220px", height: "170px" }} />
+                <h1 id="title" >YESSSSSSSSSSSSSSSS</h1>
+              </>
+            ) :
+            <h1 id="title" ref={titleRef}>Do you want to be my valentine?</h1>
         }
         <div id="Buttons">
-          <button ref={staticButtonRef} id="staticButton" onClick={function() { return setAccepted(true) }}>Button1</button>
-          <button ref={movingButtonref} id="movingButton">Button2</button>
+          <button ref={staticButtonRef} id="staticButton" onClick={function() { return setAccepted(true) }}>Yes</button>
+          <button ref={movingButtonref} id="movingButton">No</button>
         </div>
       </div>
     </div>
